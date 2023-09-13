@@ -82,6 +82,9 @@ gem 'kaminari'
 # [https://github.com/rubyconfig/config]
 gem 'config'
 
+# 認証管理 [https://github.com/heartcombo/devise]
+gem 'devise'
+
 group :development, :test do
   # 環境変数管理
   # [https://github.com/bkeepers/dotenv]
