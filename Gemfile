@@ -98,4 +98,8 @@ group :development do
   # DBスキーマ情報をモデルなどにコメント出力
   # [https://github.com/ctran/annotate_models]
   gem 'annotate'
+
+  # Gives letter_opener an interface for browsing sent emails
+  # [https://github.com/fgrehm/letter_opener_web]
+  gem 'letter_opener_web'
 end
