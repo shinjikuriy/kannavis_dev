@@ -1,1 +1,24 @@
 <h1><%= @kanji.grapheme %></h1>
+<p>
+  <% if @kanji.grapheme_alt.present? %>
+    alternative: <%= @kanji.grapheme_alt %><br>
+  <% end %>
+  <% if @kanji.grapheme_olds.present? %>
+    old form: <%= @kanji.grapheme_olds.join(' ') %><br>
+  <% end %>
+  <% if @kanji.onyomis.present? %>
+    onyomi: <%= @kanji.onyomis.join(' ') %><br>
+  <% end %>
+  <% if @kanji.kunyomis.present? %>
+    kunyomi: <%= @kanji.kunyomis.join(' ') %><br>
+  <% end %>
+  meanings: <%= @kanji.meanings.join(', ') %><br>
+  <% if @kanji.radical.present? %>
+  radical: <%= @kanji.radical %><br>
+  <% end %>
+  <% if @kanji.radical_variant.present? %>
+  radical variant: <%= @kanji.radical_variant %><br>
+  <% end %>
+  estimated jlpt level: <%= @kanji.estimated_jlpt_level %><br>
+  former jlpt level: <%= @kanji.former_jlpt_level %>
+</p>
