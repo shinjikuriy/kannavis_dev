@@ -32,7 +32,7 @@ development:
   program_data:
     <<: *default
     database: kannavis_program_data
-    # database_tasks: false
+    database_tasks: false
     migrations_paths: db/program_data_migrate
 
   # The specified database role being used to connect to postgres.
