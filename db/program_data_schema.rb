@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_29_042907) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_29_045615) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,6 +26,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_29_042907) do
     t.string "onyomis", array: true
     t.string "kunyomis", array: true
     t.index ["grapheme_orth", "grapheme_alt", "grapheme_olds"], name: "joyokanji_index", unique: true
+  end
+
+  create_table "kanjis_vocabs", id: false, force: :cascade do |t|
+    t.bigint "kanji_id", null: false
+    t.bigint "vocab_id", null: false
+    t.index ["kanji_id", "vocab_id"], name: "index_kanjis_vocabs_on_kanji_id_and_vocab_id", unique: true
+    t.index ["vocab_id", "kanji_id"], name: "index_kanjis_vocabs_on_vocab_id_and_kanji_id"
   end
 
   create_table "mifune_kanjidict", force: :cascade do |t|

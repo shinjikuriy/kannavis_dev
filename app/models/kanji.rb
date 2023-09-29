@@ -1,4 +1,5 @@
 class Kanji < ProgramDataRecord
+  has_and_belongs_to_many :vocabs
   self.primary_key = :id
 
   def self.refresh
