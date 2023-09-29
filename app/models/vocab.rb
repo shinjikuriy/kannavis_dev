@@ -5,7 +5,7 @@ class Vocab < ProgramDataRecord
     Scenic.database.refresh_materialized_view(table_name, concurrently: false, cascade: false)
   end
 
-  # def to_param
-  #   standard_newspaper_orthography
-  # end
+  def to_param
+    defacto_orthography
+  end
 end

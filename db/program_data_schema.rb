@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_29_032458) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_29_042907) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -144,17 +144,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_29_032458) do
   end
 
 
-  create_view "vocabs", materialized: true, sql_definition: <<-SQL
-      SELECT tatsum_vdrj.id,
-      tatsum_vdrj.word_level_for_international_students AS level,
-      tatsum_vdrj.word_ranking_for_international_students AS ranking,
-      tatsum_vdrj.old_jlpt_level AS former_jlpt_level,
-      tatsum_vdrj.lexeme,
-      tatsum_vdrj.standard_newspaper_orthography AS defacto_orthography,
-      tatsum_vdrj.standard_reading
-     FROM tatsum_vdrj
-    ORDER BY tatsum_vdrj.id;
-  SQL
   create_view "kanjis", materialized: true, sql_definition: <<-SQL
       SELECT t.id,
       t.item AS grapheme,
@@ -178,5 +167,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_29_032458) do
        JOIN mifune_kanjidict m ON (((t.item)::text = (m.grapheme)::text)))
        LEFT JOIN joyokanji j ON (((t.item)::text = (j.grapheme_orth)::text)))
     ORDER BY t.id;
+  SQL
+  create_view "vocabs", materialized: true, sql_definition: <<-SQL
+      SELECT tatsum_vdrj.id,
+      tatsum_vdrj.standard_newspaper_orthography AS defacto_orthography,
+      tatsum_vdrj.lexeme,
+      tatsum_vdrj.standard_reading,
+      tatsum_vdrj.part_of_speech,
+      tatsum_vdrj.word_origin_type,
+      tatsum_vdrj.old_jlpt_level AS former_jlpt_level,
+      tatsum_vdrj.word_level_for_international_students AS level,
+      tatsum_vdrj.word_ranking_for_international_students AS ranking
+     FROM tatsum_vdrj
+    ORDER BY tatsum_vdrj.id;
   SQL
 end
