@@ -22,3 +22,8 @@
   estimated jlpt level: <%= @kanji.estimated_jlpt_level %><br>
   former jlpt level: <%= @kanji.former_jlpt_level %>
 </p>
+<p>
+  <% if @kanji.vocabs.present? %>
+    words including this kanji: <%= @kanji.vocabs.take(10).map { |v| v[:defacto_orthography] }.join(', ') %>
+  <% end %>
+</p>
