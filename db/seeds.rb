@@ -5,3 +5,11 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+
+# kanjis = Kanji.all
+# kanjis.each do |kanji|
+#   vocabs = Vocab.where("defacto_orthography LIKE ?", "%#{kanji.grapheme}%")
+#   vocabs.each do |vocab|
+#     kanji.vocabs << vocab
+#   end
+# end
