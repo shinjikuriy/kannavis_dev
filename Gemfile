@@ -112,4 +112,6 @@ group :development do
   # Gives letter_opener an interface for browsing sent emails
   # [https://github.com/fgrehm/letter_opener_web]
   gem 'letter_opener_web'
+
+  gem 'better_errors'
 end
