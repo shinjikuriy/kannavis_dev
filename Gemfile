@@ -96,6 +96,12 @@ group :development, :test do
 
   # テストフレームワーク
   gem 'rspec-rails'
+
+  # テスト用モデルデータ作成
+  gem 'factory_bot_rails'
+
+  # ダミー値生成
+  gem 'faker'
 end
 
 group :development do
