@@ -31,7 +31,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :confirmable,
          :trackable, :lockable, :timeoutable
 
-  has_many :learning_items, dependent: :destroy
+  has_many :learning_items, -> { extending LearningItemExtension }, dependent: :destroy
   has_many :kanjis, through: :learning_items, disable_joins: true
 
   validates :username, presence: true, length: { minimum: 3 }, format: { with: /\A[a-zA-Z0-9_]+\z/ }, uniqueness: true
