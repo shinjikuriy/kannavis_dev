@@ -35,4 +35,24 @@ class User < ApplicationRecord
   has_many :kanjis, through: :learning_items, disable_joins: true
 
   validates :username, presence: true, length: { minimum: 3 }, format: { with: /\A[a-zA-Z0-9_]+\z/ }, uniqueness: true
+
+  # 現状、:acquiredなkanjiよりrankingが高いものはすべて習得済みと見なすこととする
+  def presume_acquired_kanjis
+    acquired_kanji_ids = learning_items.by_status(:acquired).map(&:kanji_id)
+    lowest_ranking = Kanji.where(id: acquired_kanji_ids).map(&:ranking).max # SQLにしたほうがいい
+
+    LearningItem.transaction do
+      Kanji.where('ranking < ?', lowest_ranking).each do |kanji|
+        unless kanji_ids.include?(kanji.id)
+          learning_items.create!(kanji_id: kanji.id, status: :possibly_acquired) #複数行INSERTにしたほうがいい
+          next
+        end
+
+        item = LearningItem.find_by(kanji_id: kanji.id)
+        item.status = :possibly_acquired if item.status == 'possibly_planned'
+      end
+    end
+
+    learning_items.by_status(:possibly_acquired)
+  end
 end
