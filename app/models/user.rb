@@ -44,12 +44,12 @@ class User < ApplicationRecord
     LearningItem.transaction do
       Kanji.where('ranking < ?', lowest_ranking).each do |kanji|
         unless kanji_ids.include?(kanji.id)
-          learning_items.create!(kanji_id: kanji.id, status: :possibly_acquired) #複数行INSERTにしたほうがいい
+          learning_items.create!(kanji_id: kanji.id, status: :possibly_acquired) # 複数行INSERTにしたほうがいい
           next
         end
 
-        item = LearningItem.find_by(kanji_id: kanji.id)
-        item.status = :possibly_acquired if item.status == 'possibly_planned'
+        item = learning_items.detect { |e| e.kanji_id == kanji.id }
+        item.status = :possibly_acquired if item.possibly_planned?
       end
     end
 
