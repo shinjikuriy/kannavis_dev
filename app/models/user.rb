@@ -38,7 +38,7 @@ class User < ApplicationRecord
 
   # 現状、:acquiredなkanjiよりrankingが高いものはすべて習得済みと見なすこととする
   def presume_acquired_kanjis
-    acquired_kanji_ids = learning_items.by_status(:acquired).map(&:kanji_id)
+    acquired_kanji_ids = learning_items.where(status: :acquired).map(&:kanji_id)
     lowest_ranking = Kanji.where(id: acquired_kanji_ids).map(&:ranking).max # SQLにしたほうがいい
 
     LearningItem.transaction do
@@ -48,11 +48,37 @@ class User < ApplicationRecord
           next
         end
 
-        item = learning_items.detect { |e| e.kanji_id == kanji.id }
+        item = learning_items.detect { |k| k.kanji_id == kanji.id }
         item.status = :possibly_acquired if item.possibly_planned?
       end
     end
 
     learning_items.by_status(:possibly_acquired)
+  end
+
+  def presume_planned_kanjis
+    # 習得済み漢字を得る
+    acquired_kanji_ids = learning_items.where(status: :acquired).map(&:kanji_id)
+    return [] if acquired_kanji_ids.blank?
+
+    # 習得済み漢字が含まれる語彙を得る
+    vocabs_with_acquired_kanjis = []
+    Kanji.find(acquired_kanji_ids).each do |kanji|
+      vocabs_with_acquired_kanjis.concat(kanji.vocabs.order(:ranking).take(3))
+    end
+
+    # 語彙から漢字を得る
+    kanji_ids_in_vocabs = []
+    vocabs_with_acquired_kanjis.each do |vocab|
+      kanji_ids_in_vocabs.concat vocab.kanji_ids
+    end
+    kanji_ids_in_vocabs.uniq!
+
+    # 漢字のうち、learning_itemsに含まれないものをpossibly_plannedとしてlearning_itemsに追加する
+    LearningItem.transaction do
+      kanji_ids_in_vocabs.each do |kanji_id|
+        learning_items.create!(kanji_id: kanji_id, status: :possibly_planned) unless kanji_ids.include?(kanji_id)
+      end
+    end
   end
 end
