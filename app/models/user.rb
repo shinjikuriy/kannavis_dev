@@ -53,11 +53,12 @@ class User < ApplicationRecord
       end
     end
 
-    learning_items.by_status(:possibly_acquired)
+    learning_items.where(status: :possibly_acquired).order(:kanji_id)
   end
 
   def presume_planned_kanjis
     # 習得済み漢字を得る
+    reload
     acquired_kanji_ids = learning_items.where(status: :acquired).map(&:kanji_id)
     return [] if acquired_kanji_ids.blank?
 
@@ -72,12 +73,16 @@ class User < ApplicationRecord
     vocabs_with_acquired_kanjis.each do |vocab|
       kanji_ids_in_vocabs.concat vocab.kanji_ids
     end
-    kanji_ids_in_vocabs.uniq!
+    kanji_ids_in_vocabs.uniq!&.sort!
 
     # 漢字のうち、learning_itemsに含まれないものをpossibly_plannedとしてlearning_itemsに追加する
     LearningItem.transaction do
-      kanji_ids_in_vocabs.each do |kanji_id|
-        learning_items.create!(kanji_id: kanji_id, status: :possibly_planned) unless kanji_ids.include?(kanji_id)
+      learning_items.where(status: :possibly_planned).each do |item|
+        item.destroy unless kanji_ids_in_vocabs.include?(item.kanji_id)
+      end
+
+      (kanji_ids_in_vocabs - kanji_ids).each do |kanji_id|
+        learning_items.create!(kanji_id: kanji_id, status: :possibly_planned)
       end
     end
   end
